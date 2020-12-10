@@ -391,8 +391,6 @@ void write_data( t_System *s, std::string data_file )
     s->slice_x();
     auto x = s->x;
     host_s.resize( x.size() );
-    host_s.slice_x();
-    auto h_x = host_s.x;
     host_s.deep_copy( *s );
 
     log( data, "LAMMPS data file from CabanaMD\n" );
@@ -402,18 +400,26 @@ void write_data( t_System *s, std::string data_file )
     log( data, s->local_mesh_lo_x, " ", s->local_mesh_hi_x, " xlo xhi" );
     log( data, s->local_mesh_lo_y, " ", s->local_mesh_hi_y, " ylo yhi" );
     log( data, s->local_mesh_lo_z, " ", s->local_mesh_hi_z, " zlo zhi\n" );
-    log( data, "Atoms # atomic\n" );
+    if ( s->atom_style == "atomic" )
+        log( data, "Atoms # atomic\n" );
+    else if ( s->atom_style == "charge" )
+        log( data, "Atoms # charge\n" );
 
     host_s.slice_all();
-    h_x = host_s.x;
+    auto h_x = host_s.x;
     auto h_id = host_s.id;
     auto h_type = host_s.type;
+    auto h_q = host_s.q;
     auto h_v = host_s.v;
 
     for ( int n = 0; n < s->N_local; n++ )
     {
-        log( data, h_id( n ), " ", h_type( n ) + 1, " ", h_x( n, 0 ), " ",
-             h_x( n, 1 ), " ", h_x( n, 2 ) );
+        if ( s->atom_style == "atomic" )
+            log( data, h_id( n ), " ", h_type( n ) + 1, " ", h_x( n, 0 ), " ",
+                 h_x( n, 1 ), " ", h_x( n, 2 ) );
+        else if ( s->atom_style == "charge" )
+            log( data, h_id( n ), " ", h_type( n ) + 1, " ", h_q( n ), " ",
+                 h_x( n, 0 ), " ", h_x( n, 1 ), " ", h_x( n, 2 ) );
     }
     log( data, "\nVelocities\n" );
     for ( int n = 0; n < s->N_local; n++ )
