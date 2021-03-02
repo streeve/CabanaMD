@@ -96,6 +96,8 @@ jobs:
         uses: actions/checkout@v2.2.0
       - name: Build CabanaMD
         run: |
+          echo $GITHUB_WORKSPACE
+          echo ${{ env.GITHUB_WORKSPACE }}
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/CabanaMD \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
@@ -104,7 +106,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/Cabana" \
             -DCabanaMD_ENABLE_TESTING=ON \
             -DCabanaMD_ENABLE_NNP=${{ matrix.nnp }} \
-            -DN2P2_DIR=${{ env.GITHUB_WORKSPACE }}/n2p2
+            -DN2P2_DIR=$GITHUB_WORKSPACE/CabanaMD/n2p2
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
