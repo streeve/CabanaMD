@@ -81,14 +81,14 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout n2p2
-        if: ${{ matrix.nnp }}
+        if: ${{ matrix.nnp == 'ON' }}
         uses: actions/checkout@v2.2.0
         with:
           repository: CompPhysVienna/n2p2
           ref: v2.0.1
           path: n2p2
       - name: Build n2p2
-        if: ${{ matrix.nnp }}
+        if: ${{ matrix.nnp == 'ON' }}
         working-directory: n2p2/src
         run: |
           make libnnpif INTERFACES=CabanaMD
@@ -102,7 +102,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/Cabana" \
             -DCabanaMD_ENABLE_TESTING=ON \
             -DCabanaMD_ENABLE_NNP=${{ matrix.nnp }} \
-            -DN2P2_DIR=$HOME/build/n2p2
+            -DN2P2_DIR=$HOME/n2p2
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
