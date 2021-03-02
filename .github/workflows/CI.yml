@@ -104,7 +104,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/Cabana" \
             -DCabanaMD_ENABLE_TESTING=ON \
             -DCabanaMD_ENABLE_NNP=${{ matrix.nnp }} \
-            -DN2P2_DIR=$HOME/n2p2
+            -DN2P2_DIR=$GITHUB_WORKSPACE/n2p2
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
